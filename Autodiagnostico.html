@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoevaluación del Proyecto de Investigación</title>
+<style>
+  :root {
+    --azul: #1a3a6b;
+    --azul-claro: #e8eef7;
+    --verde: #2e7d32;
+    --rojo: #c62828;
+    --gris: #f4f6fa;
+    --borde: #c9d4e5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #eef2f8;
+    margin: 0;
+    padding: 24px 12px;
+    color: #222;
+    line-height: 1.5;
+  }
+  .contenedor {
+    max-width: 950px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 32px 36px 48px;
+  }
+  header.encabezado {
+    text-align: center;
+    border-bottom: 3px solid var(--azul);
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+  }
+  header.encabezado h1 {
+    color: var(--azul);
+    font-size: 1.5rem;
+    margin: 0 0 6px;
+  }
+  header.encabezado h2 {
+    color: #555;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+  }
+  .datos-estudiante {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    background: var(--gris);
+    padding: 18px;
+    border-radius: 8px;
+    margin-bottom: 26px;
+  }
+  .datos-estudiante label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--azul);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .datos-estudiante input {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  .barra-progreso {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .barra-progreso .track {
+    flex: 1;
+    height: 12px;
+    background: #e0e6f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .barra-progreso .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2e7d32, #66bb6a);
+    transition: width 0.3s ease;
+  }
+  .barra-progreso .contador {
+    font-weight: 700;
+    color: var(--azul);
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  section.bloque {
+    margin-bottom: 30px;
+    border-left: 4px solid var(--azul);
+    padding-left: 16px;
+  }
+  section.bloque h3 {
+    color: var(--azul);
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+  }
+  section.bloque .subtitulo {
+    font-size: 0.82rem;
+    color: #777;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .pregunta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+  .pregunta:nth-child(odd) { background: #fafbfe; }
+  .pregunta:hover { background: var(--azul-claro); }
+  .pregunta .texto {
+    flex: 1;
+    font-size: 0.93rem;
+  }
+  .opciones {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .opciones label {
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border: 1.5px solid var(--borde);
+    border-radius: 6px;
+    background: #fff;
+    color: #555;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .opciones input { display: none; }
+  .opciones input:checked + span.si {
+    background: var(--verde); color: #fff; border-color: var(--verde);
+  }
+  .opciones input:checked + span.no {
+    background: var(--rojo); color: #fff; border-color: var(--rojo);
+  }
+  .opciones label span {
+    display: inline-block;
+    padding: 0;
+  }
+  .opciones label:has(input:checked) {
+    border-color: transparent;
+    padding: 6px 12px;
+  }
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    border-top: 2px solid var(--borde);
+    padding-top: 24px;
+  }
+  button {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  button:hover { transform: translateY(-1px); opacity: 0.92; }
+  .btn-primario { background: var(--azul); color: #fff; }
+  .btn-secundario { background: #e0e6f0; color: var(--azul); }
+  .btn-peligro { background: #fdecea; color: var(--rojo); }
+  .resumen {
+    display: none;
+    margin-top: 28px;
+    padding: 20px;
+    border-radius: 10px;
+    background: var(--azul-claro);
+    border: 1px solid var(--borde);
+  }
+  .resumen h4 {
+    margin: 0 0 12px;
+    color: var(--azul);
+    font-size: 1.05rem;
+  }
+  .resumen p { margin: 6px 0; font-size: 0.92rem; }
+  .resumen .alerta { color: var(--rojo); font-weight: 600; }
+  .resumen .ok { color: var(--verde); font-weight: 600; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .contenedor { box-shadow: none; padding: 0; }
+    .barra-progreso, .acciones { display: none !important; }
+    .resumen { display: block !important; page-break-inside: avoid; }
+    .pregunta { page-break-inside: avoid; }
+    section.bloque { page-break-inside: avoid; }
+  }
+  @media (max-width: 640px) {
+    .contenedor { padding: 20px 16px 32px; }
+    .datos-estudiante { grid-template-columns: 1fr; }
+    .pregunta { flex-direction: column; align-items: stretch; gap: 8px; }
+    .opciones { justify-content: flex-end; }
+  }
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+  <header class="encabezado">
+    <h1>Autoevaluación del Proyecto de Investigación</h1>
+    <h2>Maestría en Ciencias de la Educación · Curso II de Investigación</h2>
+  </header>
+
+  <div class="datos-estudiante">
+    <div>
+      <label for="nombre">Nombre del estudiante</label>
+      <input type="text" id="nombre" placeholder="Escribe tu nombre completo">
+    </div>
+    <div>
+      <label for="titulo">Título tentativo del proyecto</label>
+      <input type="text" id="titulo" placeholder="Escribe el título de tu investigación">
+    </div>
+  </div>
+
+  <div class="barra-progreso">
+    <span class="contador" id="contador">0 / 0 respondidas</span>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <!-- ================= SECCIONES ================= -->
+
+  <section class="bloque">
+    <h3>1. Etapa preparatoria del proyecto</h3>
+    <p class="subtitulo">Preguntas de reflexión inicial y verificación</p>
+
+    <div class="pregunta"><span class="texto">¿Has elegido un problema realmente de tu interés?</span>
+      <div class="opciones"><label><input type="radio" name="p1" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p1" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Describes un problema de investigación y no uno de sus síntomas?</span>
+      <div class="opciones"><label><input type="radio" name="p2" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p2" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>2. Pregunta de investigación</h3>
+    <p class="subtitulo">Primera revisión</p>
+
+    <div class="pregunta"><span class="texto">¿Describe concretamente el problema seleccionado?</span>
+      <div class="opciones"><label><input type="radio" name="p3" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p3" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Se entiende con claridad qué deseas investigar?</span>
+      <div class="opciones"><label><input type="radio" name="p4" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p4" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Especifica el contexto de estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p5" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p5" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿La redacción y los términos empleados orientan hacia lo que deseas realizar?</span>
+      <div class="opciones"><label><input type="radio" name="p6" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p6" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>3. Hipótesis o supuestos de investigación</h3>
+    <p class="subtitulo">Primera revisión</p>
+
+    <div class="pregunta"><span class="texto">¿Da respuesta provisional y directamente a la pregunta de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p7" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p7" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿La respuesta se apega a las mismas variables o categorías especificadas en la pregunta de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p8" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p8" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Orienta hacia el logro del objetivo?</span>
+      <div class="opciones"><label><input type="radio" name="p9" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p9" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Especifica el contexto de estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p10" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p10" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>4. Objetivo general</h3>
+    <p class="subtitulo">Primera revisión</p>
+
+    <div class="pregunta"><span class="texto">¿Describe con claridad la acción concreta que desarrollarás como producto final de la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p11" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p11" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Encauza el estudio hacia la respuesta a la pregunta de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p12" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p12" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿La acción determinada corresponde con las variables o categorías de la pregunta y la hipótesis?</span>
+      <div class="opciones"><label><input type="radio" name="p13" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p13" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Indica una acción realizable y evaluable?</span>
+      <div class="opciones"><label><input type="radio" name="p14" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p14" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Especifica el contexto donde se desarrollará la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p15" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p15" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿La acción determinada no depende de terceros?</span>
+      <div class="opciones"><label><input type="radio" name="p16" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p16" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Emplea un verbo en infinitivo para especificar la acción por lograr?</span>
+      <div class="opciones"><label><input type="radio" name="p17" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p17" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>5. Título</h3>
+    <p class="subtitulo">Revisión del título propuesto</p>
+
+    <div class="pregunta"><span class="texto">¿Describe claramente lo que se va a realizar como producto final de la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p18" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p18" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Incluye las mismas variables o categorías de la pregunta, la hipótesis y el objetivo?</span>
+      <div class="opciones"><label><input type="radio" name="p19" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p19" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Señala concretamente el contexto donde se desarrollará la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p20" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p20" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Se mantiene dentro de la delimitación dada al problema de estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p21" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p21" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>6. Antecedentes del problema de investigación</h3>
+
+    <div class="pregunta"><span class="texto">¿Describen con claridad la situación actual del problema de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p22" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p22" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Consideran la evolución que ha llevado al problema a su actual situación y hace necesario su estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p23" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p23" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Toman en cuenta los aspectos teóricos relacionados con el problema de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p24" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p24" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Se mencionan las aportaciones de trabajos similares?</span>
+      <div class="opciones"><label><input type="radio" name="p25" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p25" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>7. Pregunta de investigación</h3>
+    <p class="subtitulo">Segunda revisión</p>
+
+    <div class="pregunta"><span class="texto">¿Plantea con claridad el problema de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p26" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p26" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿El enfoque propuesto es el mismo que te interesa abordar durante la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p27" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p27" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Corresponde a un problema viable de atenderse?</span>
+      <div class="opciones"><label><input type="radio" name="p28" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p28" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Considera con precisión el contexto donde se desarrollará el estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p29" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p29" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>8. Hipótesis</h3>
+    <p class="subtitulo">Segunda revisión</p>
+
+    <div class="pregunta"><span class="texto">¿Da respuesta provisoria y directa a la pregunta de investigación definitiva?</span>
+      <div class="opciones"><label><input type="radio" name="p30" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p30" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Respeta las variables o categorías especificadas en la pregunta de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p31" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p31" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Se mantiene dentro de los límites y el contexto propuestos para el estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p32" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p32" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Especifica el contexto donde se desarrolla el estudio?</span>
+      <div class="opciones"><label><input type="radio" name="p33" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p33" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>9. Variables</h3>
+    <p class="subtitulo">Solo para investigación cuantitativa</p>
+
+    <div class="pregunta"><span class="texto"><strong>Variable independiente:</strong> ¿El elemento manipulable es susceptible de ser medido?</span>
+      <div class="opciones"><label><input type="radio" name="p34" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p34" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Variable independiente:</strong> ¿Su redacción corresponde con lo propuesto en la hipótesis?</span>
+      <div class="opciones"><label><input type="radio" name="p35" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p35" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Variable dependiente:</strong> ¿Indica qué se espera como resultado después de manipular la variable independiente?</span>
+      <div class="opciones"><label><input type="radio" name="p36" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p36" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Variable dependiente:</strong> ¿Ese resultado es medible?</span>
+      <div class="opciones"><label><input type="radio" name="p37" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p37" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Variable dependiente:</strong> ¿Lo propuesto como variable se apega a lo indicado en la hipótesis?</span>
+      <div class="opciones"><label><input type="radio" name="p38" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p38" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>10. Objetivos</h3>
+    <p class="subtitulo">Revisión del objetivo general y los particulares</p>
+
+    <div class="pregunta"><span class="texto">¿Encauza el estudio hacia el logro del producto final pretendido?</span>
+      <div class="opciones"><label><input type="radio" name="p39" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p39" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Encauza hacia la respuesta a la pregunta de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p40" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p40" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Es adecuado y suficiente para culminar exitosamente la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p41" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p41" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Plantea una acción concreta, realizable y evaluable?</span>
+      <div class="opciones"><label><input type="radio" name="p42" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p42" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Se mantiene dentro de la delimitación y el contexto propuestos?</span>
+      <div class="opciones"><label><input type="radio" name="p43" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p43" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Determina un compromiso del investigador y no de terceras personas?</span>
+      <div class="opciones"><label><input type="radio" name="p44" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p44" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Los elementos incluidos son correspondientes con la pregunta y la hipótesis?</span>
+      <div class="opciones"><label><input type="radio" name="p45" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p45" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Emplea un verbo en infinitivo para indicar la acción por realizar?</span>
+      <div class="opciones"><label><input type="radio" name="p46" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p46" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Objetivos particulares:</strong> ¿Encauzan el estudio hacia la respuesta a la pregunta de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p47" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p47" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Objetivos particulares:</strong> ¿Indican una acción concreta, realizable y evaluable?</span>
+      <div class="opciones"><label><input type="radio" name="p48" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p48" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto"><strong>Objetivos particulares:</strong> ¿Especifican el contexto donde se desarrollará la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p49" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p49" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>11. Justificación</h3>
+
+    <div class="pregunta"><span class="texto">¿Explica claramente por qué vale la pena realizar esta investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p50" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p50" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Aprovecha todos los argumentos encontrados al llenar la matriz de la etapa preparatoria?</span>
+      <div class="opciones"><label><input type="radio" name="p51" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p51" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Evita presentar como "un listado" los argumentos de justificación?</span>
+      <div class="opciones"><label><input type="radio" name="p52" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p52" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>12. Esquema provisional / Índice tentativo</h3>
+
+    <div class="pregunta"><span class="texto">¿Considera los temas y subtemas necesarios y adecuados para sustentar la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p53" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p53" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Representa una estructura informativa coherente que facilite el acopio documental?</span>
+      <div class="opciones"><label><input type="radio" name="p54" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p54" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Incluye todo lo que requieres saber para realizar tu investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p55" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p55" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Toma en cuenta las posibles necesidades informativas de los lectores potenciales?</span>
+      <div class="opciones"><label><input type="radio" name="p56" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p56" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Coincide con el enfoque propuesto para la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p57" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p57" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Indica claramente la subordinación de los temas y subtemas?</span>
+      <div class="opciones"><label><input type="radio" name="p58" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p58" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Evita la "subdivisión" de alguno de sus temas en un solo subtema?</span>
+      <div class="opciones"><label><input type="radio" name="p59" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p59" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>13. Cronograma</h3>
+
+    <div class="pregunta"><span class="texto">¿Incluye todas las actividades necesarias para concluir la investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p60" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p60" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Distribuye adecuadamente los tiempos para asegurar la conclusión del proyecto?</span>
+      <div class="opciones"><label><input type="radio" name="p61" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p61" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Considera holgura o tolerancia en los tiempos programados?</span>
+      <div class="opciones"><label><input type="radio" name="p62" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p62" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <section class="bloque">
+    <h3>14. Bibliografía</h3>
+
+    <div class="pregunta"><span class="texto">¿Es suficiente para emprender el trabajo de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p63" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p63" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Aporta información pertinente y relevante respecto al problema de investigación?</span>
+      <div class="opciones"><label><input type="radio" name="p64" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p64" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Toma en cuenta a los clásicos de la disciplina relacionada con el problema?</span>
+      <div class="opciones"><label><input type="radio" name="p65" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p65" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Considera fuentes actualizadas según el problema y el objetivo?</span>
+      <div class="opciones"><label><input type="radio" name="p66" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p66" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Toma en cuenta solamente fuentes confiables?</span>
+      <div class="opciones"><label><input type="radio" name="p67" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p67" value="no"><span class="no">No</span></label></div></div>
+
+    <div class="pregunta"><span class="texto">¿Respeta el formato APA?</span>
+      <div class="opciones"><label><input type="radio" name="p68" value="si"><span class="si">Sí</span></label><label><input type="radio" name="p68" value="no"><span class="no">No</span></label></div></div>
+  </section>
+
+  <!-- ================= RESUMEN ================= -->
+  <div class="resumen" id="resumen">
+    <h4>Resumen de la autoevaluación</h4>
+    <p id="resumen-linea"></p>
+    <p id="resumen-alerta"></p>
+    <p style="margin-top:14px; font-size:0.85rem; color:#555;">
+      <em>Nota: los reactivos marcados con "No" señalan áreas de oportunidad que conviene atender antes de continuar con la siguiente etapa del proyecto.</em>
+    </p>
+  </div>
+
+  <!-- ================= ACCIONES ================= -->
+  <div class="acciones">
+    <button class="btn-primario" onclick="mostrarResumen()">Ver resumen</button>
+    <button class="btn-secundario" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <button class="btn-peligro" onclick="limpiar()">Limpiar respuestas</button>
+  </div>
+
+</div>
+
+<script>
+  const total = document.querySelectorAll('.pregunta').length;
+
+  function actualizarProgreso() {
+    const respondidas = document.querySelectorAll('.pregunta input[type=radio]:checked').length;
+    document.getElementById('contador').textContent = respondidas + ' / ' + total + ' respondidas';
+    document.getElementById('fill').style.width = (respondidas / total * 100) + '%';
+  }
+
+  document.querySelectorAll('.pregunta input[type=radio]').forEach(r => {
+    r.addEventListener('change', actualizarProgreso);
+  });
+
+  function mostrarResumen() {
+    const respondidas = document.querySelectorAll('.pregunta input[type=radio]:checked').length;
+    const noes = document.querySelectorAll('.pregunta input[type=radio][value=no]:checked').length;
+    const nombre = document.getElementById('nombre').value.trim() || '(sin nombre)';
+    const titulo = document.getElementById('titulo').value.trim() || '(sin título)';
+
+    document.getElementById('resumen-linea').innerHTML =
+      '<strong>Estudiante:</strong> ' + nombre + '<br>' +
+      '<strong>Proyecto:</strong> ' + titulo + '<br>' +
+      '<strong>Reactivos respondidos:</strong> ' + respondidas + ' de ' + total + '<br>' +
+      '<strong>Reactivos marcados con "No":</strong> ' + noes;
+
+    const alerta = document.getElementById('resumen-alerta');
+    if (respondidas < total) {
+      alerta.className = 'alerta';
+      alerta.textContent = 'Aún hay reactivos sin responder. Conviene completar la autoevaluación.';
+    } else if (noes === 0) {
+      alerta.className = 'ok';
+      alerta.textContent = 'Todos los reactivos fueron respondidos afirmativamente. Excelente nivel de avance.';
+    } else {
+      alerta.className = 'alerta';
+      alerta.textContent = 'Se identificaron ' + noes + ' área(s) de oportunidad. Revísalas con tu asesor.';
+    }
+
+    document.getElementById('resumen').style.display = 'block';
+    document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function limpiar() {
+    if (!confirm('¿Deseas borrar todas las respuestas?')) return;
+    document.querySelectorAll('.pregunta input[type=radio]').forEach(r => r.checked = false);
+    document.getElementById('nombre').value = '';
+    document.getElementById('titulo').value = '';
+    document.getElementById('resumen').style.display = 'none';
+    actualizarProgreso();
+  }
+
+  actualizarProgreso();
+</script>
+</body>
+</html>
